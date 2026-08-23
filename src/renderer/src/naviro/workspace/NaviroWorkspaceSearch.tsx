@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { FileSearch, Loader2, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -11,6 +11,11 @@ import {
   type NaviroWorkspaceSearchResult
 } from './naviro-workspace-search'
 
+type SearchSnapshot = {
+  rootSignature: string
+  value: NaviroWorkspaceSearchResult
+}
+
 export function NaviroWorkspaceSearch({
   workspaceId,
   roots
@@ -19,29 +24,27 @@ export function NaviroWorkspaceSearch({
   roots: readonly NaviroWorkspaceRoot[]
 }): React.JSX.Element {
   const [query, setQuery] = useState('')
-  const [selectedRootIds, setSelectedRootIds] = useState<Set<string>>(
-    () => new Set(roots.map((root) => root.id))
-  )
-  const [result, setResult] = useState<NaviroWorkspaceSearchResult | null>(null)
+  const [deselectedRootIds, setDeselectedRootIds] = useState<Set<string>>(() => new Set())
+  const [searchSnapshot, setSearchSnapshot] = useState<SearchSnapshot | null>(null)
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    setSelectedRootIds(new Set(roots.map((root) => root.id)))
-    setResult(null)
-  }, [workspaceId, roots])
+  const rootSignature = `${workspaceId}:${roots.map((root) => root.id).join(':')}`
+  const result = searchSnapshot?.rootSignature === rootSignature ? searchSnapshot.value : null
 
   const runSearch = async (): Promise<void> => {
     if (!query.trim()) {
       return
     }
-    const selectedRoots = roots.filter((root) => selectedRootIds.has(root.id))
+    const selectedRoots = roots.filter((root) => !deselectedRootIds.has(root.id))
     if (selectedRoots.length === 0) {
       toast.error('Select at least one root')
       return
     }
     setLoading(true)
     try {
-      setResult(await searchNaviroWorkspaceRoots(query.trim(), selectedRoots))
+      setSearchSnapshot({
+        rootSignature,
+        value: await searchNaviroWorkspaceRoots(query.trim(), selectedRoots)
+      })
     } finally {
       setLoading(false)
     }
@@ -72,14 +75,14 @@ export function NaviroWorkspaceSearch({
           {roots.map((root) => (
             <label key={root.id} className="flex items-center gap-2 text-xs text-muted-foreground">
               <Checkbox
-                checked={selectedRootIds.has(root.id)}
+                checked={!deselectedRootIds.has(root.id)}
                 onCheckedChange={(checked) => {
-                  setSelectedRootIds((current) => {
+                  setDeselectedRootIds((current) => {
                     const next = new Set(current)
                     if (checked === true) {
-                      next.add(root.id)
-                    } else {
                       next.delete(root.id)
+                    } else {
+                      next.add(root.id)
                     }
                     return next
                   })
