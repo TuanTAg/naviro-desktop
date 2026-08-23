@@ -12,6 +12,7 @@ import {
   hasRequestedBackgroundTerminalWorktreeMount,
   subscribeBackgroundTerminalWorktreeMountRequests
 } from '../components/terminal/background-terminal-worktree-mount'
+import { useNaviroShellSnapshot } from '@/naviro/shell/naviro-shell-state'
 
 export type AppChromeLayout = ReturnType<typeof useAppChromeLayout>
 
@@ -20,6 +21,7 @@ export type AppChromeLayout = ReturnType<typeof useAppChromeLayout>
  * workspace owns the tab strip, and which surfaces stay mounted — from store state.
  */
 export function useAppChromeLayout() {
+  const { activeSurface: naviroSurface } = useNaviroShellSnapshot()
   const activeView = useAppStore((s) => s.activeView)
   const sidebarOpen = useAppStore((s) => s.sidebarOpen)
   const rightSidebarOpen = useAppStore((s) => s.rightSidebarOpen)
@@ -64,13 +66,18 @@ export function useAppChromeLayout() {
   // Why: skip the terminal bundle on the landing path, but once mounted keep hidden panes alive through sleep/shutdown when activeWorktreeId briefly goes null.
   const shouldMountTerminalWorkbench = canMountTerminalWorkbenchNow || hasMountedTerminalWorkbench
   // Why: visible worktree creation owns its faux tab strip start to finish; keep the previous workspace mounted for retention without real chrome.
-  const creationLayoutActive = shouldShowWorktreeCreationSurface({
-    activeView,
-    activePendingCreationId,
-    hasActivePendingCreation: activePendingCreationExists
-  })
+  const creationLayoutActive =
+    naviroSurface === 'workbench' &&
+    shouldShowWorktreeCreationSurface({
+      activeView,
+      activePendingCreationId,
+      hasActivePendingCreation: activePendingCreationExists
+    })
   const workspaceChromeActive =
-    activeView === 'terminal' && activeWorktreeId !== null && !creationLayoutActive
+    activeView === 'terminal' &&
+    naviroSurface === 'workbench' &&
+    activeWorktreeId !== null &&
+    !creationLayoutActive
   const hasTabBar = tabCount >= 2
   // Activity/Space are full-page navigation surfaces (like Settings), so the worktree sidebar is hidden there.
   const showSidebar =
@@ -128,13 +135,17 @@ export function useAppChromeLayout() {
     isFullScreen,
     leftSidebarStyle,
     leftTitlebarChromeLayout,
+    naviroSurface,
     rightSidebarExplorerView,
     rightSidebarOpen,
     rightSidebarTab,
     shouldMountTerminalWorkbench,
     showSidebar,
     // Full-page navigation surfaces own the whole content area, so suppress right-sidebar controls.
-    showRightSidebarControls: !creationLayoutActive && canShowRightSidebarForView(activeView),
+    showRightSidebarControls:
+      naviroSurface === 'workbench' &&
+      !creationLayoutActive &&
+      canShowRightSidebarForView(activeView),
     showTitlebarAppName: settings?.showTitlebarAppName !== false,
     showTitlebarExpandButton: workspaceChromeActive && !hasTabBar && effectiveActiveTabExpanded,
     sidebarOpen,
