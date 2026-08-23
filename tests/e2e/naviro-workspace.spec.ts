@@ -1,8 +1,19 @@
 import path from 'node:path'
+import type { Page } from '@playwright/test'
 import { expect, test } from './helpers/orca-app'
 import { waitForSessionReady } from './helpers/store'
 
 const CATALOG_KEY = 'naviro.workspace.catalog.v1'
+
+async function openNaviroSurface(page: Page, name: 'Files' | 'Projects'): Promise<void> {
+  const button = page.getByRole('button', { name, exact: true })
+  await expect(button).toBeVisible()
+  await expect(button).toBeEnabled()
+  // Why: the Electron fixture can keep resizing terminal chrome during startup,
+  // so pointer actionability never becomes stable even though this semantic
+  // button is visible. Keyboard activation exercises the same onClick contract.
+  await button.press('Enter')
+}
 
 test.describe('Naviro Workbench', () => {
   test('creates and reopens a named workspace', async ({ orcaPage }) => {
@@ -11,7 +22,7 @@ test.describe('Naviro Workbench', () => {
     await orcaPage.reload()
     await waitForSessionReady(orcaPage)
 
-    await orcaPage.getByRole('button', { name: 'Projects', exact: true }).click()
+    await openNaviroSurface(orcaPage, 'Projects')
     await expect(orcaPage.getByRole('dialog', { name: 'New workspace' })).toBeVisible()
     await orcaPage.getByRole('textbox', { name: 'Workspace name' }).fill('Release Desk')
     await orcaPage.getByRole('button', { name: 'Create workspace' }).click()
@@ -19,7 +30,7 @@ test.describe('Naviro Workbench', () => {
 
     await orcaPage.reload()
     await waitForSessionReady(orcaPage)
-    await orcaPage.getByRole('button', { name: 'Projects', exact: true }).click()
+    await openNaviroSurface(orcaPage, 'Projects')
     await expect(orcaPage.getByRole('heading', { name: 'Release Desk' })).toBeVisible()
   })
 
@@ -78,7 +89,7 @@ test.describe('Naviro Workbench', () => {
     )
     await orcaPage.reload()
     await waitForSessionReady(orcaPage)
-    await orcaPage.getByRole('button', { name: 'Files', exact: true }).click()
+    await openNaviroSurface(orcaPage, 'Files')
 
     await expect(orcaPage.getByRole('button', { name: /Client/ })).toBeVisible()
     await expect(orcaPage.getByRole('button', { name: /Documents/ })).toBeVisible()
