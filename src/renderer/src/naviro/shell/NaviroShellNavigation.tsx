@@ -12,6 +12,7 @@ import {
   TerminalSquare
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { translate } from '@/i18n/i18n'
 import { useAppStore } from '@/store'
 import {
   setNaviroSurface,
@@ -21,19 +22,27 @@ import {
 } from './naviro-shell-state'
 
 type NavItem = {
-  label: string
+  label: () => string
   icon: typeof Home
   surface: Exclude<NaviroSurface, 'workbench'>
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', icon: Home, surface: 'home' },
-  { label: 'Assistant', icon: Sparkles, surface: 'assistant' },
-  { label: 'Inbox', icon: Inbox, surface: 'inbox' },
-  { label: 'Notes', icon: NotebookPen, surface: 'notes' },
-  { label: 'Projects', icon: FolderKanban, surface: 'projects' },
-  { label: 'Files', icon: Files, surface: 'files' },
-  { label: 'Agents', icon: Bot, surface: 'agents' }
+  { label: () => translate('naviro.shell.home', 'Home'), icon: Home, surface: 'home' },
+  {
+    label: () => translate('naviro.shell.assistant', 'Assistant'),
+    icon: Sparkles,
+    surface: 'assistant'
+  },
+  { label: () => translate('naviro.shell.inbox', 'Inbox'), icon: Inbox, surface: 'inbox' },
+  { label: () => translate('naviro.shell.notes', 'Notes'), icon: NotebookPen, surface: 'notes' },
+  {
+    label: () => translate('naviro.shell.projects', 'Projects'),
+    icon: FolderKanban,
+    surface: 'projects'
+  },
+  { label: () => translate('naviro.shell.files', 'Files'), icon: Files, surface: 'files' },
+  { label: () => translate('naviro.shell.agents', 'Agents'), icon: Bot, surface: 'agents' }
 ]
 
 function navigationButtonClass(active: boolean): string {
@@ -69,9 +78,12 @@ export function NaviroShellNavigation(): React.JSX.Element {
   }
 
   return (
-    <nav className="flex flex-col gap-0.5 px-2 pt-2" aria-label="Naviro">
+    <nav
+      className="flex flex-col gap-0.5 px-2 pt-2"
+      aria-label={translate('naviro.brand', 'Naviro')}
+    >
       <div className="px-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-worktree-sidebar-foreground/35">
-        Naviro
+        {translate('naviro.brand', 'Naviro')}
       </div>
       {NAV_ITEMS.map((item) => {
         const Icon = item.icon
@@ -88,7 +100,7 @@ export function NaviroShellNavigation(): React.JSX.Element {
               className={cn('size-4 shrink-0', !active && 'text-worktree-sidebar-foreground/30')}
               strokeWidth={active ? 2.25 : 1.75}
             />
-            <span>{item.label}</span>
+            <span>{item.label()}</span>
           </button>
         )
       })}
@@ -102,7 +114,7 @@ export function NaviroShellNavigation(): React.JSX.Element {
         className={navigationButtonClass(activeView === 'tasks')}
       >
         <CheckSquare2 className="size-4 shrink-0 text-worktree-sidebar-foreground/30" />
-        <span>Tasks</span>
+        <span>{translate('naviro.shell.tasks', 'Tasks')}</span>
       </button>
       <button
         type="button"
@@ -114,16 +126,19 @@ export function NaviroShellNavigation(): React.JSX.Element {
         className={navigationButtonClass(activeView === 'automations')}
       >
         <CalendarClock className="size-4 shrink-0 text-worktree-sidebar-foreground/30" />
-        <span>Automations</span>
+        <span>{translate('naviro.shell.automations', 'Automations')}</span>
       </button>
       <button
         type="button"
         onClick={openGit}
         className={navigationButtonClass(false)}
-        title="Open source control for the active root"
+        title={translate(
+          'naviro.shell.openSourceControl',
+          'Open source control for the active root'
+        )}
       >
         <GitBranch className="size-4 shrink-0 text-worktree-sidebar-foreground/30" />
-        <span>Git</span>
+        <span>{translate('naviro.shell.git', 'Git')}</span>
       </button>
       <button
         type="button"
@@ -136,10 +151,10 @@ export function NaviroShellNavigation(): React.JSX.Element {
         )}
       >
         <TerminalSquare className="size-4 shrink-0 text-worktree-sidebar-foreground/30" />
-        <span>Terminal</span>
+        <span>{translate('naviro.shell.terminal', 'Terminal')}</span>
       </button>
       <div className="mx-2 mt-2 border-t border-worktree-sidebar-border/70 pt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-worktree-sidebar-foreground/35">
-        Orca tools
+        {translate('naviro.shell.orcaTools', 'Orca tools')}
       </div>
     </nav>
   )

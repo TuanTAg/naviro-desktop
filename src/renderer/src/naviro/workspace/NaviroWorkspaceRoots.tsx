@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { translate } from '@/i18n/i18n'
 import type { NaviroWorkspaceRoot } from '../../../../shared/naviro-workspace-types'
 import { classifyNaviroRootAvailability } from '../../../../shared/naviro-workspace-policy'
 import {
@@ -68,15 +69,15 @@ function useRootAvailability(roots: readonly NaviroWorkspaceRoot[]): Record<stri
 
 function availabilityLabel(value: RootAvailability): string {
   if (value === 'available') {
-    return 'Available'
+    return translate('naviro.roots.available', 'Available')
   }
   if (value === 'missing') {
-    return 'Missing'
+    return translate('naviro.roots.missing', 'Missing')
   }
   if (value === 'unbound') {
-    return 'Needs connection'
+    return translate('naviro.roots.needsConnection', 'Needs connection')
   }
-  return 'Checking'
+  return translate('naviro.roots.checking', 'Checking')
 }
 
 export function NaviroWorkspaceRoots({
@@ -93,8 +94,15 @@ export function NaviroWorkspaceRoots({
   if (roots.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-border p-8 text-center">
-        <p className="text-sm font-medium">No roots yet</p>
-        <p className="mt-1 text-sm text-muted-foreground">Add folders from any parent or drive.</p>
+        <p className="text-sm font-medium">
+          {translate('naviro.roots.emptyTitle', 'No roots yet')}
+        </p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {translate(
+            'naviro.roots.emptyDescription',
+            'Add folders from any parent or drive.'
+          )}
+        </p>
       </div>
     )
   }
@@ -121,7 +129,9 @@ export function NaviroWorkspaceRoots({
                 <Button
                   variant="ghost"
                   size="icon-xs"
-                  aria-label={`Rename ${root.name}`}
+                  aria-label={translate('naviro.roots.renameAria', 'Rename {{name}}', {
+                    name: root.name
+                  })}
                   onClick={() => {
                     setRenameRoot(root)
                     setRenameValue(root.name)
@@ -132,7 +142,9 @@ export function NaviroWorkspaceRoots({
                 <Button
                   variant="ghost"
                   size="icon-xs"
-                  aria-label={`Remove ${root.name}`}
+                  aria-label={translate('naviro.roots.removeAria', 'Remove {{name}}', {
+                    name: root.name
+                  })}
                   onClick={() => setRemoveRoot(root)}
                 >
                   <Trash2 />
@@ -145,12 +157,21 @@ export function NaviroWorkspaceRoots({
                     setNaviroWorkspaceRootAccess(root.id, value as NaviroWorkspaceRoot['access'])
                   }
                 >
-                  <SelectTrigger size="sm" aria-label={`Access for ${root.name}`}>
+                  <SelectTrigger
+                    size="sm"
+                    aria-label={translate('naviro.roots.accessAria', 'Access for {{name}}', {
+                      name: root.name
+                    })}
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="read-write">Read & write</SelectItem>
-                    <SelectItem value="read-only">Read only</SelectItem>
+                    <SelectItem value="read-write">
+                      {translate('naviro.roots.readWrite', 'Read & write')}
+                    </SelectItem>
+                    <SelectItem value="read-only">
+                      {translate('naviro.roots.readOnly', 'Read only')}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <Button
@@ -159,24 +180,36 @@ export function NaviroWorkspaceRoots({
                   disabled={!connected || root.kind !== 'git' || root.access === 'read-only'}
                   onClick={() => {
                     if (!openNaviroRootSourceControl(root)) {
-                      toast.error('Unable to open this root')
+                      toast.error(translate('naviro.roots.openFailed', 'Unable to open this root'))
                     }
                   }}
                 >
-                  <GitBranch /> Git
+                  <GitBranch /> {translate('naviro.shell.git', 'Git')}
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   disabled={!connected || root.access === 'read-only'}
-                  title={root.access === 'read-only' ? 'Terminal is disabled for read-only roots' : undefined}
+                  title={
+                    root.access === 'read-only'
+                      ? translate(
+                          'naviro.roots.terminalReadOnlyTitle',
+                          'Terminal is disabled for read-only roots'
+                        )
+                      : undefined
+                  }
                   onClick={() => {
                     if (!openNaviroRootTerminal(root)) {
-                      toast.error('Unable to open a terminal for this root')
+                      toast.error(
+                        translate(
+                          'naviro.roots.terminalOpenFailed',
+                          'Unable to open a terminal for this root'
+                        )
+                      )
                     }
                   }}
                 >
-                  <TerminalSquare /> Terminal
+                  <TerminalSquare /> {translate('naviro.shell.terminal', 'Terminal')}
                 </Button>
                 {!connected ? (
                   <Button
@@ -188,12 +221,18 @@ export function NaviroWorkspaceRoots({
                       const reconnected = await reconnectNaviroRoot(root)
                       setReconnectingRootId(null)
                       if (!reconnected) {
-                        toast.error(`Could not reconnect ${root.name}`)
+                        toast.error(
+                          translate(
+                            'naviro.roots.reconnectFailed',
+                            'Could not reconnect {{name}}',
+                            { name: root.name }
+                          )
+                        )
                       }
                     }}
                   >
                     <FolderSync className={reconnectingRootId === root.id ? 'animate-spin' : undefined} />
-                    Reconnect
+                    {translate('naviro.roots.reconnect', 'Reconnect')}
                   </Button>
                 ) : null}
               </div>
@@ -205,17 +244,24 @@ export function NaviroWorkspaceRoots({
       <Dialog open={renameRoot !== null} onOpenChange={(open) => !open && setRenameRoot(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Rename root</DialogTitle>
-            <DialogDescription>This changes only the Naviro alias, never the folder name.</DialogDescription>
+            <DialogTitle>{translate('naviro.roots.renameTitle', 'Rename root')}</DialogTitle>
+            <DialogDescription>
+              {translate(
+                'naviro.roots.renameDescription',
+                'This changes only the Naviro alias, never the folder name.'
+              )}
+            </DialogDescription>
           </DialogHeader>
           <Input
             value={renameValue}
             onChange={(event) => setRenameValue(event.target.value)}
-            aria-label="Root alias"
+            aria-label={translate('naviro.roots.aliasAria', 'Root alias')}
             autoFocus
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRenameRoot(null)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setRenameRoot(null)}>
+              {translate('naviro.common.cancel', 'Cancel')}
+            </Button>
             <Button
               disabled={!renameValue.trim()}
               onClick={() => {
@@ -225,7 +271,7 @@ export function NaviroWorkspaceRoots({
                 setRenameRoot(null)
               }}
             >
-              Rename
+              {translate('naviro.roots.rename', 'Rename')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -234,13 +280,23 @@ export function NaviroWorkspaceRoots({
       <Dialog open={removeRoot !== null} onOpenChange={(open) => !open && setRemoveRoot(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Remove root from workspace?</DialogTitle>
+            <DialogTitle>
+              {translate('naviro.roots.removeTitle', 'Remove root from workspace?')}
+            </DialogTitle>
             <DialogDescription>
-              {removeRoot?.path} stays on disk. Naviro removes only this workspace reference.
+              {removeRoot
+                ? translate(
+                    'naviro.roots.removeDescription',
+                    '{{path}} stays on disk. Naviro removes only this workspace reference.',
+                    { path: removeRoot.path }
+                  )
+                : null}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRemoveRoot(null)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setRemoveRoot(null)}>
+              {translate('naviro.common.cancel', 'Cancel')}
+            </Button>
             <Button
               variant="destructive"
               onClick={() => {
@@ -250,7 +306,7 @@ export function NaviroWorkspaceRoots({
                 setRemoveRoot(null)
               }}
             >
-              Remove reference
+              {translate('naviro.roots.removeReference', 'Remove reference')}
             </Button>
           </DialogFooter>
         </DialogContent>

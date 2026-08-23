@@ -8,6 +8,7 @@ import {
   Loader2
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { translate } from '@/i18n/i18n'
 import { cn } from '@/lib/utils'
 import type { DirEntry } from '../../../../shared/filesystem-entry-types'
 import {
@@ -55,7 +56,8 @@ function DirectoryRows({
   if (state?.loading) {
     return (
       <div className="flex items-center gap-2 py-1 text-xs text-muted-foreground" style={{ paddingLeft: depth * 16 + 28 }}>
-        <Loader2 className="size-3 animate-spin" /> Loading…
+        <Loader2 className="size-3 animate-spin" />
+        {translate('naviro.explorer.loading', 'Loading…')}
       </div>
     )
   }
@@ -85,7 +87,12 @@ function DirectoryRows({
                 if (entry.isDirectory) {
                   toggleDirectory(root, child)
                 } else if (!openNaviroRootFile(root, child.absolutePath, child.relativePath)) {
-                  toast.error('This root is not connected to an Orca workspace')
+                  toast.error(
+                    translate(
+                      'naviro.errors.rootNotConnected',
+                      'This root is not connected to an Orca workspace'
+                    )
+                  )
                 }
               }}
             >
@@ -170,7 +177,11 @@ export function NaviroWorkspaceExplorer({
   }
 
   if (roots.length === 0) {
-    return <p className="p-5 text-sm text-muted-foreground">Add a root to browse files.</p>
+    return (
+      <p className="p-5 text-sm text-muted-foreground">
+        {translate('naviro.explorer.empty', 'Add a root to browse files.')}
+      </p>
+    )
   }
 
   return (

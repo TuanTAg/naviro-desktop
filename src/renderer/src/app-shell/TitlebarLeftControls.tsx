@@ -71,9 +71,11 @@ export function TitlebarLeftControls({ layout }: { layout: AppChromeLayout }): R
             <ContextMenuTrigger asChild>
               <div
                 className="titlebar-app-name"
-                aria-label="Naviro"
+                aria-label={translate('naviro.brand', 'Naviro')}
               >
-                <span className="titlebar-app-name-main">Naviro</span>
+                <span className="titlebar-app-name-main">
+                  {translate('naviro.brand', 'Naviro')}
+                </span>
               </div>
             </ContextMenuTrigger>
             <ContextMenuContent>

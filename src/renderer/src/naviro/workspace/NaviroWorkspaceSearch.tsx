@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
+import { translate } from '@/i18n/i18n'
 import type { NaviroWorkspaceRoot } from '../../../../shared/naviro-workspace-types'
 import { openNaviroRootFile } from './naviro-root-runtime'
 import {
@@ -36,7 +37,7 @@ export function NaviroWorkspaceSearch({
     }
     const selectedRoots = roots.filter((root) => !deselectedRootIds.has(root.id))
     if (selectedRoots.length === 0) {
-      toast.error('Select at least one root')
+      toast.error(translate('naviro.search.selectRoot', 'Select at least one root'))
       return
     }
     setLoading(true)
@@ -63,12 +64,15 @@ export function NaviroWorkspaceSearch({
           <Input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search across selected roots"
-            aria-label="Search workspace roots"
+            placeholder={translate(
+              'naviro.search.placeholder',
+              'Search across selected roots'
+            )}
+            aria-label={translate('naviro.search.aria', 'Search workspace roots')}
           />
           <Button type="submit" size="sm" disabled={loading || !query.trim()}>
             {loading ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />}
-            Search
+            {translate('naviro.search.action', 'Search')}
           </Button>
         </div>
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
@@ -96,14 +100,26 @@ export function NaviroWorkspaceSearch({
       <div className="scrollbar-sleek min-h-0 flex-1 overflow-auto p-3">
         {!result ? (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            <FileSearch className="mr-2 size-4" /> Results retain their root identity.
+            <FileSearch className="mr-2 size-4" />
+            {translate('naviro.search.idle', 'Results retain their root identity.')}
           </div>
         ) : result.files.length === 0 ? (
-          <p className="p-4 text-center text-sm text-muted-foreground">No matches found.</p>
+          <p className="p-4 text-center text-sm text-muted-foreground">
+            {translate('naviro.search.empty', 'No matches found.')}
+          </p>
         ) : (
           <div className="space-y-2">
             <p className="px-1 text-xs text-muted-foreground">
-              {result.totalMatches} matches{result.truncated ? ' · results truncated' : ''}
+              {result.totalMatches === 1
+                ? translate('naviro.search.matchOne', '{{count}} match', {
+                    count: result.totalMatches
+                  })
+                : translate('naviro.search.matchMany', '{{count}} matches', {
+                    count: result.totalMatches
+                  })}
+              {result.truncated
+                ? ` ${translate('naviro.search.truncated', '· results truncated')}`
+                : ''}
             </p>
             {result.errors.map((error) => (
               <p key={error.rootId} className="rounded-md border border-destructive/30 p-2 text-xs text-destructive">
@@ -119,7 +135,12 @@ export function NaviroWorkspaceSearch({
                   className="block w-full rounded-md border border-border bg-card p-3 text-left hover:bg-accent"
                   onClick={() => {
                     if (root && !openNaviroRootFile(root, file.filePath, file.relativePath)) {
-                      toast.error('This root is not connected to an Orca workspace')
+                      toast.error(
+                        translate(
+                          'naviro.errors.rootNotConnected',
+                          'This root is not connected to an Orca workspace'
+                        )
+                      )
                     }
                   }}
                 >
