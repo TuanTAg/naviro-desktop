@@ -31,7 +31,9 @@ export function NaviroWorkspaceSearch({
   }, [workspaceId, roots])
 
   const runSearch = async (): Promise<void> => {
-    if (!query.trim()) return
+    if (!query.trim()) {
+      return
+    }
     const selectedRoots = roots.filter((root) => selectedRootIds.has(root.id))
     if (selectedRoots.length === 0) {
       toast.error('Select at least one root')
@@ -74,8 +76,11 @@ export function NaviroWorkspaceSearch({
                 onCheckedChange={(checked) => {
                   setSelectedRootIds((current) => {
                     const next = new Set(current)
-                    if (checked === true) next.add(root.id)
-                    else next.delete(root.id)
+                    if (checked === true) {
+                      next.add(root.id)
+                    } else {
+                      next.delete(root.id)
+                    }
                     return next
                   })
                 }}

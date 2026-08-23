@@ -41,7 +41,9 @@ function useRootAvailability(roots: readonly NaviroWorkspaceRoot[]): Record<stri
     setAvailability(Object.fromEntries(roots.map((root) => [root.id, 'checking'])))
     void Promise.all(
       roots.map(async (root) => {
-        if (!root.orcaWorkspaceId) return [root.id, 'unbound'] as const
+        if (!root.orcaWorkspaceId) {
+          return [root.id, 'unbound'] as const
+        }
         try {
           const exists = await window.api.fs.pathExists({
             filePath: root.path,
@@ -53,7 +55,9 @@ function useRootAvailability(roots: readonly NaviroWorkspaceRoot[]): Record<stri
         }
       })
     ).then((entries) => {
-      if (!cancelled) setAvailability(Object.fromEntries(entries))
+      if (!cancelled) {
+        setAvailability(Object.fromEntries(entries))
+      }
     })
     return () => {
       cancelled = true
@@ -63,9 +67,15 @@ function useRootAvailability(roots: readonly NaviroWorkspaceRoot[]): Record<stri
 }
 
 function availabilityLabel(value: RootAvailability): string {
-  if (value === 'available') return 'Available'
-  if (value === 'missing') return 'Missing'
-  if (value === 'unbound') return 'Needs connection'
+  if (value === 'available') {
+    return 'Available'
+  }
+  if (value === 'missing') {
+    return 'Missing'
+  }
+  if (value === 'unbound') {
+    return 'Needs connection'
+  }
   return 'Checking'
 }
 
@@ -148,7 +158,9 @@ export function NaviroWorkspaceRoots({
                   size="sm"
                   disabled={!connected || root.kind !== 'git' || root.access === 'read-only'}
                   onClick={() => {
-                    if (!openNaviroRootSourceControl(root)) toast.error('Unable to open this root')
+                    if (!openNaviroRootSourceControl(root)) {
+                      toast.error('Unable to open this root')
+                    }
                   }}
                 >
                   <GitBranch /> Git
@@ -159,7 +171,9 @@ export function NaviroWorkspaceRoots({
                   disabled={!connected || root.access === 'read-only'}
                   title={root.access === 'read-only' ? 'Terminal is disabled for read-only roots' : undefined}
                   onClick={() => {
-                    if (!openNaviroRootTerminal(root)) toast.error('Unable to open a terminal for this root')
+                    if (!openNaviroRootTerminal(root)) {
+                      toast.error('Unable to open a terminal for this root')
+                    }
                   }}
                 >
                   <TerminalSquare /> Terminal
@@ -173,7 +187,9 @@ export function NaviroWorkspaceRoots({
                       setReconnectingRootId(root.id)
                       const reconnected = await reconnectNaviroRoot(root)
                       setReconnectingRootId(null)
-                      if (!reconnected) toast.error(`Could not reconnect ${root.name}`)
+                      if (!reconnected) {
+                        toast.error(`Could not reconnect ${root.name}`)
+                      }
                     }}
                   >
                     <FolderSync className={reconnectingRootId === root.id ? 'animate-spin' : undefined} />
@@ -203,7 +219,9 @@ export function NaviroWorkspaceRoots({
             <Button
               disabled={!renameValue.trim()}
               onClick={() => {
-                if (renameRoot) renameNaviroWorkspaceRoot(renameRoot.id, renameValue)
+                if (renameRoot) {
+                  renameNaviroWorkspaceRoot(renameRoot.id, renameValue)
+                }
                 setRenameRoot(null)
               }}
             >
@@ -226,7 +244,9 @@ export function NaviroWorkspaceRoots({
             <Button
               variant="destructive"
               onClick={() => {
-                if (removeRoot) removeNaviroWorkspaceRoot(removeRoot.id)
+                if (removeRoot) {
+                  removeNaviroWorkspaceRoot(removeRoot.id)
+                }
                 setRemoveRoot(null)
               }}
             >

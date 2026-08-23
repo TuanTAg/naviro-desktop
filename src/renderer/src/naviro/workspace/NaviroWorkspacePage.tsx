@@ -53,28 +53,40 @@ export default function NaviroWorkspacePage({
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
-    if (catalog.workspaces.length === 0) setCreateDialogOpen(true)
+    if (catalog.workspaces.length === 0) {
+      setCreateDialogOpen(true)
+    }
   }, [catalog.workspaces.length])
 
   const addRoots = async (): Promise<void> => {
-    if (!workspace) return
+    if (!workspace) {
+      return
+    }
     const paths = await window.api.repos.pickFolders()
-    if (paths.length === 0) return
+    if (paths.length === 0) {
+      return
+    }
     setAddingRoots(true)
     const result = await addPickedNaviroRoots(paths)
     setAddingRoots(false)
-    if (result.added.length > 0) toast.success(`Added ${result.added.length} root${result.added.length === 1 ? '' : 's'}`)
+    if (result.added.length > 0) {
+      toast.success(`Added ${result.added.length} root${result.added.length === 1 ? '' : 's'}`)
+    }
     result.errors.forEach((error) => toast.error(error.path, { description: error.message }))
   }
 
   const saveWorkspace = async (): Promise<void> => {
-    if (!workspace) return
+    if (!workspace) {
+      return
+    }
     const result = await window.api.fs.saveDownloadedFile({
       suggestedName: safeWorkspaceFilename(workspace.name),
       content: serializeNaviroWorkspace(workspace),
       encoding: 'utf8'
     })
-    if (!result.canceled) toast.success('Workspace saved', { description: result.destinationPath })
+    if (!result.canceled) {
+      toast.success('Workspace saved', { description: result.destinationPath })
+    }
   }
 
   const importWorkspaceFile = async (file: File): Promise<void> => {
@@ -83,7 +95,9 @@ export default function NaviroWorkspacePage({
       importAndActivateNaviroWorkspace(document.workspace)
       let disconnectedCount = 0
       for (const root of document.workspace.roots) {
-        if (!(await reconnectNaviroRoot(root))) disconnectedCount += 1
+        if (!(await reconnectNaviroRoot(root))) {
+          disconnectedCount += 1
+        }
       }
       if (disconnectedCount > 0) {
         toast.warning('Workspace opened with unavailable roots', {
@@ -131,7 +145,9 @@ export default function NaviroWorkspacePage({
           className="hidden"
           onChange={(event) => {
             const file = event.target.files?.[0]
-            if (file) void importWorkspaceFile(file)
+            if (file) {
+              void importWorkspaceFile(file)
+            }
             event.currentTarget.value = ''
           }}
         />

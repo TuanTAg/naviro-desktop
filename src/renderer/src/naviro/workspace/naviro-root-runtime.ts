@@ -44,7 +44,9 @@ async function registerLocalPath(
     if ('error' in result && result.error.includes('Not a valid git repository')) {
       result = await window.api.repos.add({ path, kind: 'folder' })
     }
-    if ('error' in result) throw new Error(result.error)
+    if ('error' in result) {
+      throw new Error(result.error)
+    }
     repo = result.repo
     await useAppStore.getState().fetchRepos()
   }
@@ -77,7 +79,9 @@ export async function addPickedNaviroRoots(
   for (const path of paths) {
     try {
       const workspace = getActiveNaviroWorkspace()
-      if (!workspace) throw new Error('Create or open a workspace before adding roots')
+      if (!workspace) {
+        throw new Error('Create or open a workspace before adding roots')
+      }
       const normalizedPath = normalizeWorkspacePathForComparison(path)
       if (
         workspace.roots.some(
@@ -104,7 +108,9 @@ export async function reconnectNaviroRoot(root: NaviroWorkspaceRoot): Promise<bo
       (candidate) =>
         candidate.executionHostId === root.executionHostId && samePath(candidate.path, root.path)
     )
-    if (!repo) return false
+    if (!repo) {
+      return false
+    }
     await state.fetchWorktrees(
       repo.id,
       root.executionHostId ? { executionHostId: root.executionHostId } : undefined
@@ -134,7 +140,9 @@ export async function reconnectNaviroRoot(root: NaviroWorkspaceRoot): Promise<bo
 }
 
 function activateRoot(root: NaviroWorkspaceRoot): boolean {
-  if (!root.orcaWorkspaceId) return false
+  if (!root.orcaWorkspaceId) {
+    return false
+  }
   return Boolean(
     activateAndRevealWorktree(root.orcaWorkspaceId, {
       executionHostId: root.executionHostId ?? undefined,
@@ -144,7 +152,9 @@ function activateRoot(root: NaviroWorkspaceRoot): boolean {
 }
 
 export function openNaviroRootSourceControl(root: NaviroWorkspaceRoot): boolean {
-  if (!activateRoot(root)) return false
+  if (!activateRoot(root)) {
+    return false
+  }
   const state = useAppStore.getState()
   state.setRightSidebarTab('source-control')
   state.setRightSidebarOpen(true)
@@ -156,7 +166,9 @@ export function openNaviroRootFile(
   filePath: string,
   relativePath: string
 ): boolean {
-  if (!activateRoot(root) || !root.orcaWorkspaceId) return false
+  if (!activateRoot(root) || !root.orcaWorkspaceId) {
+    return false
+  }
   useAppStore.getState().openFile(
     {
       filePath,
@@ -173,7 +185,9 @@ export function openNaviroRootFile(
 
 export function openNaviroRootTerminal(root: NaviroWorkspaceRoot): boolean {
   const request = getNaviroTerminalLaunchRequest(root)
-  if (!request || !activateRoot(root)) return false
+  if (!request || !activateRoot(root)) {
+    return false
+  }
   const state = useAppStore.getState()
   const tab = state.createTab(request.worktreeId, undefined, undefined, {
     activate: true,

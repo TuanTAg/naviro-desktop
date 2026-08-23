@@ -46,8 +46,11 @@ export async function searchNaviroWorkspaceRoots(
   const errors: NaviroWorkspaceSearchResult['errors'] = []
   settled.forEach((item, index) => {
     const root = roots[index]
-    if (item.status === 'fulfilled') results.push(item.value)
-    else errors.push({ rootId: root.id, message: String(item.reason) })
+    if (item.status === 'fulfilled') {
+      results.push(item.value)
+    } else {
+      errors.push({ rootId: root.id, message: String(item.reason) })
+    }
   })
   return mergeNaviroRootSearchResults(results, errors)
 }

@@ -22,7 +22,9 @@ export function getNaviroShellSnapshot(): NaviroShellSnapshot {
 }
 
 export function setNaviroSurface(activeSurface: NaviroSurface): void {
-  if (snapshot.activeSurface === activeSurface) return
+  if (snapshot.activeSurface === activeSurface) {
+    return
+  }
   snapshot = { activeSurface }
   listeners.forEach((listener) => listener())
 }

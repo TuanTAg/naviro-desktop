@@ -35,7 +35,9 @@ const SURFACE_COPY: Record<
 }
 
 export function NaviroSurfacePage({ surface }: { surface: NaviroSurface }): React.JSX.Element | null {
-  if (surface === 'workbench' || surface === 'projects' || surface === 'files') return null
+  if (surface === 'workbench' || surface === 'projects' || surface === 'files') {
+    return null
+  }
   const copy = SURFACE_COPY[surface]
   const Icon = copy.icon
   return (

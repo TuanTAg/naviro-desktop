@@ -20,4 +20,14 @@
 - Conflict risk: low.
 - Rework path: move the call into a future upstream navigation event hook if one becomes available.
 
+## Patch: fetch upstream release tags in fork CI
+
+- Phase: 0
+- File: `.github/workflows/pr.yml`
+- Orca behavior changed: only fork CI fetches upstream desktop release tags before the cross-version wire check; `stablyai/orca` behavior is unchanged.
+- Why an extension alone was insufficient: GitHub forks do not inherit upstream tags, while the existing harness intentionally fails when no stable release tag is present.
+- Regression protection: the `cross-version wire compatibility` job must select and test a real published Orca baseline.
+- Conflict risk: low.
+- Rework path: drop this patch if upstream makes the harness fork-aware or the fork starts mirroring release tags.
+
 No main-process, filesystem-provider, Git, terminal-process, SSH, or remote-wire patch was introduced.

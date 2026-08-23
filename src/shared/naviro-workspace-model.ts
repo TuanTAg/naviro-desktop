@@ -85,7 +85,9 @@ export function updateWorkspaceRoot(
   >,
   now = Date.now()
 ): NaviroWorkspace {
-  if (!workspace.roots.some((root) => root.id === rootId)) return workspace
+  if (!workspace.roots.some((root) => root.id === rootId)) {
+    return workspace
+  }
   return {
     ...workspace,
     roots: workspace.roots.map((root) => (root.id === rootId ? { ...root, ...updates } : root)),
@@ -98,7 +100,9 @@ export function removeWorkspaceRoot(
   rootId: string,
   now = Date.now()
 ): NaviroWorkspace {
-  if (!workspace.roots.some((root) => root.id === rootId)) return workspace
+  if (!workspace.roots.some((root) => root.id === rootId)) {
+    return workspace
+  }
   const roots = workspace.roots.filter((root) => root.id !== rootId)
   return {
     ...workspace,
@@ -115,7 +119,10 @@ export function upsertWorkspaceInCatalog(
 ): NaviroWorkspaceCatalog {
   const existingIndex = catalog.workspaces.findIndex((item) => item.id === workspace.id)
   const workspaces = [...catalog.workspaces]
-  if (existingIndex === -1) workspaces.push(workspace)
-  else workspaces[existingIndex] = workspace
+  if (existingIndex === -1) {
+    workspaces.push(workspace)
+  } else {
+    workspaces[existingIndex] = workspace
+  }
   return { ...catalog, workspaces, activeWorkspaceId: workspace.id }
 }

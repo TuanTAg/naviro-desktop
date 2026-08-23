@@ -82,8 +82,9 @@ function DirectoryRows({
               className="flex w-full items-center gap-1.5 rounded-sm py-1 pr-2 text-left text-xs text-foreground/80 hover:bg-accent hover:text-accent-foreground"
               style={{ paddingLeft: depth * 16 + 12 }}
               onClick={() => {
-                if (entry.isDirectory) toggleDirectory(root, child)
-                else if (!openNaviroRootFile(root, child.absolutePath, child.relativePath)) {
+                if (entry.isDirectory) {
+                  toggleDirectory(root, child)
+                } else if (!openNaviroRootFile(root, child.absolutePath, child.relativePath)) {
                   toast.error('This root is not connected to an Orca workspace')
                 }
               }}
@@ -147,7 +148,9 @@ export function NaviroWorkspaceExplorer({
       return
     }
     setExpanded((current) => new Set(current).add(key))
-    if (directoryState[key]?.entries) return
+    if (directoryState[key]?.entries) {
+      return
+    }
     setDirectoryState((current) => ({ ...current, [key]: { loading: true } }))
     try {
       const entries = await window.api.fs.readDir({

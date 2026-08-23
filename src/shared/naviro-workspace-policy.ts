@@ -8,7 +8,9 @@ export type NaviroTerminalLaunchRequest = {
 export function getNaviroTerminalLaunchRequest(
   root: NaviroWorkspaceRoot
 ): NaviroTerminalLaunchRequest | null {
-  if (root.access === 'read-only' || !root.orcaWorkspaceId) return null
+  if (root.access === 'read-only' || !root.orcaWorkspaceId) {
+    return null
+  }
   return { worktreeId: root.orcaWorkspaceId, cwd: root.path }
 }
 
@@ -20,6 +22,8 @@ export function classifyNaviroRootAvailability(
   root: NaviroWorkspaceRoot,
   pathExists: boolean
 ): 'available' | 'missing' | 'unbound' {
-  if (!root.orcaWorkspaceId) return 'unbound'
+  if (!root.orcaWorkspaceId) {
+    return 'unbound'
+  }
   return pathExists ? 'available' : 'missing'
 }

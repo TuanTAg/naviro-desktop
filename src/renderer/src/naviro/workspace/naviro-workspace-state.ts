@@ -20,7 +20,9 @@ const STORAGE_KEY = 'naviro.workspace.catalog.v1'
 type Listener = () => void
 
 function loadCatalog(): NaviroWorkspaceCatalog {
-  if (typeof window === 'undefined') return createEmptyNaviroWorkspaceCatalog()
+  if (typeof window === 'undefined') {
+    return createEmptyNaviroWorkspaceCatalog()
+  }
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY)
     return stored ? parseNaviroWorkspaceCatalog(JSON.parse(stored)) : createEmptyNaviroWorkspaceCatalog()
@@ -75,7 +77,9 @@ export function createAndActivateNaviroWorkspace(name: string): NaviroWorkspace 
 }
 
 export function activateNaviroWorkspace(workspaceId: string): void {
-  if (!catalog.workspaces.some((workspace) => workspace.id === workspaceId)) return
+  if (!catalog.workspaces.some((workspace) => workspace.id === workspaceId)) {
+    return
+  }
   persistAndPublish({ ...catalog, activeWorkspaceId: workspaceId })
 }
 
@@ -91,7 +95,9 @@ export function addNaviroWorkspaceRoot(
   root: Omit<NaviroWorkspaceRoot, 'id'>
 ): NaviroWorkspaceRoot {
   const workspace = getActiveNaviroWorkspace()
-  if (!workspace) throw new Error('Create or open a workspace before adding roots')
+  if (!workspace) {
+    throw new Error('Create or open a workspace before adding roots')
+  }
   const addedRoot = { ...root, id: generatedId() }
   replaceActiveWorkspace(addWorkspaceRoot(workspace, addedRoot))
   return addedRoot
@@ -99,7 +105,9 @@ export function addNaviroWorkspaceRoot(
 
 export function renameNaviroWorkspaceRoot(rootId: string, name: string): void {
   const workspace = getActiveNaviroWorkspace()
-  if (!workspace || name.trim().length === 0) return
+  if (!workspace || name.trim().length === 0) {
+    return
+  }
   replaceActiveWorkspace(updateWorkspaceRoot(workspace, rootId, { name: name.trim() }))
 }
 
@@ -108,7 +116,9 @@ export function setNaviroWorkspaceRootAccess(
   access: NaviroWorkspaceRoot['access']
 ): void {
   const workspace = getActiveNaviroWorkspace()
-  if (!workspace) return
+  if (!workspace) {
+    return
+  }
   replaceActiveWorkspace(updateWorkspaceRoot(workspace, rootId, { access }))
 }
 
@@ -120,7 +130,9 @@ export function bindNaviroWorkspaceRoot(
   >
 ): void {
   const workspace = getActiveNaviroWorkspace()
-  if (!workspace) return
+  if (!workspace) {
+    return
+  }
   replaceActiveWorkspace(
     updateWorkspaceRoot(workspace, rootId, {
       kind: binding.kind,
@@ -134,6 +146,8 @@ export function bindNaviroWorkspaceRoot(
 
 export function removeNaviroWorkspaceRoot(rootId: string): void {
   const workspace = getActiveNaviroWorkspace()
-  if (!workspace) return
+  if (!workspace) {
+    return
+  }
   replaceActiveWorkspace(removeWorkspaceRoot(workspace, rootId))
 }
