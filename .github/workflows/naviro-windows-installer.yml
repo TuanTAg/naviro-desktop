@@ -1,0 +1,88 @@
+name: Naviro Windows Installer
+
+on:
+  push:
+    branches:
+      - codex/naviro-m1-phase-0-2
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: naviro-windows-installer-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.repository == 'TuanTAg/naviro-desktop'
+    runs-on: windows-2022
+    timeout-minutes: 60
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: Cache electron-builder downloads
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~\AppData\Local\electron\Cache
+            ~\AppData\Local\electron-builder\Cache
+          key: electron-builder-windows-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            electron-builder-windows-
+
+      - name: Install dependencies
+        uses: nick-fields/retry@v4
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          retry_wait_seconds: 30
+          command: pnpm install --frozen-lockfile
+
+      - name: Build release inputs
+        run: pnpm run build:release:parallel
+
+      - name: Prepare Electron native runtime
+        run: node config/scripts/ensure-native-runtime.mjs --runtime=electron
+
+      - name: Package unsigned installer
+        env:
+          ORCA_REUSE_PREPARED_NATIVE_RUNTIME: '1'
+        run: pnpm exec electron-builder --config config/electron-builder.config.cjs --win nsis --x64 --publish never
+
+      - name: Record installer checksum
+        shell: pwsh
+        run: |
+          $installer = Get-Item 'dist/orca-windows-setup.exe'
+          $hash = (Get-FileHash -Algorithm SHA256 -Path $installer.FullName).Hash.ToLowerInvariant()
+          "$hash  $($installer.Name)" | Set-Content -Path 'dist/SHA256SUMS.txt'
+          Get-Item $installer.FullName, 'dist/SHA256SUMS.txt'
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v7
+        with:
+          name: naviro-windows-installer-${{ github.sha }}
+          path: |
+            dist/orca-windows-setup.exe
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
