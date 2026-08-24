@@ -11,6 +11,9 @@ import { TitlebarLeftControls } from './TitlebarLeftControls'
 import { RightSidebarToggle, TitlebarMainStrip } from './TitlebarMainStrip'
 import type { AppChromeLayout } from './use-app-chrome-layout'
 import type { FloatingWorkspacePanelState } from './use-floating-workspace-panel'
+import { NaviroSurfacePage } from '@/naviro/shell/NaviroSurfacePage'
+
+const NaviroWorkspacePage = lazy(() => import('@/naviro/workspace/NaviroWorkspacePage'))
 
 const Landing = lazy(() => import('../components/Landing'))
 const WorktreeCreationPanel = lazy(
@@ -65,7 +68,13 @@ function WorktreeSidebar({
 }
 
 function ActivePage({ layout }: { layout: AppChromeLayout }): React.JSX.Element {
-  const { activeView, activeWorktreeId, activePendingCreationId, creationLayoutActive } = layout
+  const {
+    activeView,
+    activeWorktreeId,
+    activePendingCreationId,
+    creationLayoutActive,
+    naviroSurface
+  } = layout
   return (
     <>
       {activeView === 'settings' ? <Settings /> : null}
@@ -76,13 +85,25 @@ function ActivePage({ layout }: { layout: AppChromeLayout }): React.JSX.Element 
       {activeView === 'activity' ? <ActivityPrototypePage /> : null}
       {activeView === 'space' ? <WorkspaceSpacePage /> : null}
       {activeView === 'mobile' ? <MobilePage /> : null}
+      {activeView === 'terminal' &&
+      (naviroSurface === 'projects' || naviroSurface === 'files') ? (
+        <NaviroWorkspacePage initialView={naviroSurface} />
+      ) : null}
+      {activeView === 'terminal' && naviroSurface !== 'workbench' ? (
+        <NaviroSurfacePage surface={naviroSurface} />
+      ) : null}
       {activeView === 'terminal' && creationLayoutActive && activePendingCreationId ? (
         <WorktreeCreationPanel
           creationId={activePendingCreationId}
           reserveCollapsedSidebarHeaderSpace={layout.leftTitlebarChromeLayout.isFloating}
         />
       ) : null}
-      {activeView === 'terminal' && !activeWorktreeId && !creationLayoutActive ? <Landing /> : null}
+      {activeView === 'terminal' &&
+      naviroSurface === 'workbench' &&
+      !activeWorktreeId &&
+      !creationLayoutActive ? (
+        <Landing />
+      ) : null}
     </>
   )
 }
@@ -203,7 +224,7 @@ export function AppWorkspaceShell(props: {
                     <RecoverableRenderErrorBoundary
                       boundaryId={`page.${layout.activeView}`}
                       surface="page"
-                      resetKey={layout.activeView}
+                      resetKey={`${layout.activeView}:${layout.naviroSurface}`}
                       title={translate('auto.App.b7a714db1e', 'This page hit an error.')}
                       description={translate(
                         'auto.App.03a14f6b5b',

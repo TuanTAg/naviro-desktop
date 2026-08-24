@@ -484,6 +484,12 @@ jobs:
           filter: blob:none
           persist-credentials: false
 
+      # Forks do not inherit release tags from the upstream repository. The
+      # cross-version harness needs those tags to select a published baseline.
+      - name: Fetch upstream desktop release tags
+        if: github.repository != 'stablyai/orca'
+        run: git fetch --force --filter=blob:none https://github.com/stablyai/orca.git 'refs/tags/v*:refs/tags/v*'
+
       - uses: ./.github/actions/install-node-dependencies
         with:
           native-runtime: node

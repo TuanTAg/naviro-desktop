@@ -31,6 +31,7 @@ import type { IssueCommandLaunch } from '@/lib/worktree-setup-issue-command-queu
 import { ensureWorktreeHasInitialTerminal } from '@/lib/worktree-initial-terminal-seeding'
 import { ensureWebRuntimeWorktreeTerminalAfterWake } from '@/lib/web-runtime-worktree-terminal-after-wake'
 import { applyWorktreeNavViewEntry } from '@/lib/worktree-nav-view-history-replay'
+import { showNaviroWorkbench } from '@/naviro/shell/naviro-shell-state'
 
 /**
  * Shared activation sequence used by the worktree palette and add-repo/worktree dialogs.
@@ -85,6 +86,7 @@ export function activateAndRevealFolderWorkspace(
   if (!folderWorkspace) {
     return false
   }
+  showNaviroWorkbench()
   const runtimeEnvironmentId =
     opts && 'runtimeEnvironmentId' in opts
       ? (opts.runtimeEnvironmentId ?? null)
@@ -162,6 +164,7 @@ export function activateAndRevealWorktree(
   if (!wt) {
     return false
   }
+  showNaviroWorkbench()
   const hasActivationWork = Boolean(
     opts?.startup || opts?.setup || opts?.defaultTabs || opts?.issueCommand
   )

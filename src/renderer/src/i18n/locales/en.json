@@ -7,6 +7,121 @@
       "webDescription": "Retry the web client or reconnect to the paired runtime."
     }
   },
+  "naviro": {
+    "brand": "Naviro",
+    "common": {
+      "cancel": "Cancel"
+    },
+    "shell": {
+      "home": "Home",
+      "assistant": "Assistant",
+      "inbox": "Inbox",
+      "notes": "Notes",
+      "projects": "Projects",
+      "files": "Files",
+      "agents": "Agents",
+      "tasks": "Tasks",
+      "automations": "Automations",
+      "openSourceControl": "Open source control for the active root",
+      "git": "Git",
+      "terminal": "Terminal",
+      "orcaTools": "Orca tools"
+    },
+    "surface": {
+      "home": {
+        "title": "A calm place for all your work",
+        "description": "Bring several folders together, keep their boundaries clear, and choose where each action runs."
+      },
+      "assistant": {
+        "title": "Assistant",
+        "description": "The assistant surface is reserved for a later milestone. Orca agent sessions remain available in the workbench."
+      },
+      "inbox": {
+        "title": "Inbox",
+        "description": "A unified inbox will arrive in a later milestone. This shell entry is intentionally non-destructive."
+      },
+      "notes": {
+        "title": "Notes",
+        "description": "Workspace-scoped notes are planned after the multi-root foundation is stable."
+      },
+      "agents": {
+        "title": "Agents",
+        "description": "Existing Orca agents continue to run in the workbench while Naviro orchestration is developed."
+      },
+      "openWorkspace": "Open a workspace"
+    },
+    "explorer": {
+      "loading": "Loading…",
+      "empty": "Add a root to browse files."
+    },
+    "errors": {
+      "rootNotConnected": "This root is not connected to an Orca workspace"
+    },
+    "workspace": {
+      "addedRoot": "Added {{count}} root",
+      "addedRoots": "Added {{count}} roots",
+      "saved": "Workspace saved",
+      "openedWithUnavailableRoots": "Workspace opened with unavailable roots",
+      "rootNeedsReconnection": "{{count}} root needs reconnection.",
+      "rootsNeedReconnection": "{{count}} roots need reconnection.",
+      "opened": "Workspace opened",
+      "openFailed": "Could not open workspace",
+      "label": "Naviro workspace",
+      "noneOpen": "No workspace open",
+      "recentAria": "Recent workspaces",
+      "openRecent": "Open recent",
+      "new": "New",
+      "open": "Open",
+      "save": "Save",
+      "addRoots": "Add roots",
+      "createOrOpen": "Create or open a workspace",
+      "groupsRoots": "A workspace groups roots without changing them on disk.",
+      "roots": "Roots",
+      "rootBoundaries": "Each root keeps its own filesystem, Git, access, and execution context.",
+      "explorer": "Explorer",
+      "search": "Workspace search",
+      "newTitle": "New workspace",
+      "newDescription": "Existing workspaces stay in your recent list.",
+      "name": "Workspace name",
+      "create": "Create workspace"
+    },
+    "roots": {
+      "available": "Available",
+      "missing": "Missing",
+      "needsConnection": "Needs connection",
+      "checking": "Checking",
+      "emptyTitle": "No roots yet",
+      "emptyDescription": "Add folders from any parent or drive.",
+      "renameAria": "Rename {{name}}",
+      "removeAria": "Remove {{name}}",
+      "accessAria": "Access for {{name}}",
+      "readWrite": "Read & write",
+      "readOnly": "Read only",
+      "openFailed": "Unable to open this root",
+      "terminalReadOnlyTitle": "Terminal is disabled for read-only roots",
+      "terminalOpenFailed": "Unable to open a terminal for this root",
+      "reconnectFailed": "Could not reconnect {{name}}",
+      "reconnect": "Reconnect",
+      "renameTitle": "Rename root",
+      "renameDescription": "This changes only the Naviro alias, never the folder name.",
+      "aliasAria": "Root alias",
+      "rename": "Rename",
+      "removeTitle": "Remove root from workspace?",
+      "removeDescription": "{{path}} stays on disk. Naviro removes only this workspace reference.",
+      "removeReference": "Remove reference"
+    },
+    "search": {
+      "selectRoot": "Select at least one root",
+      "placeholder": "Search across selected roots",
+      "aria": "Search workspace roots",
+      "action": "Search",
+      "idle": "Results retain their root identity.",
+      "empty": "No matches found.",
+      "matchOne": "{{count}} match",
+      "matchMany": "{{count}} matches",
+      "truncated": "· results truncated"
+    }
+  },
   "browser": {
     "loadFailure": {
       "connectionNotSecure": "Connection isn't secure",
